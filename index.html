@@ -1,0 +1,886 @@
+<!doctype html><html><head>
+<meta name="theme-color" content="#111111">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sherik">
+<link rel="manifest" href="manifest.json">
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sherik</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Layout: phone-first app shell. Coloured light drifts behind frosted glass panes;
+   a floating glass tab bar on phones turns into a side rail on desktop. */
+:root{
+  --bg:#E8EEF2; --ink:#0D1A24; --ink2:#4C5D6A; --ink3:#8394A1;
+  --glass:rgba(255,255,255,.56); --glass-strong:rgba(255,255,255,.82); --glass-hi:rgba(255,255,255,.9);
+  --line:rgba(255,255,255,.75); --hair:rgba(13,26,36,.09); --field:rgba(255,255,255,.6);
+  --shade:rgba(30,50,70,.14);
+  --accent:#F04A24; --accent2:#FF8A4C; --on-accent:#fff; --accent-soft:rgba(240,74,36,.12);
+  --teal:#0A9C8F; --sky:#2F7BF0; --ok:#178F5F; --ok-soft:rgba(23,143,95,.14); --danger:#D93A3F;
+  --b1:#FFB39A; --b2:#86E0D2; --b3:#A8C6FF;
+  --map-land:#E6ECEB; --map-road:#FFFFFF; --map-road2:rgba(255,255,255,.75); --map-water:#A9D3F2; --map-park:#BFE3C4; --map-label:#5B6C78;
+  --bubble:rgba(255,255,255,.8);
+  --display:"Unbounded","Onest",system-ui,sans-serif;
+  --body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:22px; --r-sm:14px; --sab:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#091018; --ink:#F0F5F8; --ink2:#A9B7C2; --ink3:#71818D;
+  --glass:rgba(30,42,54,.56); --glass-strong:rgba(32,44,56,.86); --glass-hi:rgba(255,255,255,.14);
+  --line:rgba(255,255,255,.13); --hair:rgba(255,255,255,.09); --field:rgba(255,255,255,.07);
+  --shade:rgba(0,0,0,.4);
+  --accent:#FF6A45; --accent2:#FF9A5C; --on-accent:#1A0A05; --accent-soft:rgba(255,106,69,.16);
+  --teal:#35CBBB; --sky:#6BA6FF; --ok:#4AD29A; --ok-soft:rgba(74,210,154,.15); --danger:#FF6B6F;
+  --b1:#8A2E17; --b2:#0A6158; --b3:#1D4594;
+  --map-land:#141D26; --map-road:#2A3846; --map-road2:rgba(255,255,255,.06); --map-water:#17405F; --map-park:#173A2C; --map-label:#8FA0AD;
+  --bubble:rgba(44,58,72,.85); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#091018; --ink:#F0F5F8; --ink2:#A9B7C2; --ink3:#71818D;
+  --glass:rgba(30,42,54,.56); --glass-strong:rgba(32,44,56,.86); --glass-hi:rgba(255,255,255,.14);
+  --line:rgba(255,255,255,.13); --hair:rgba(255,255,255,.09); --field:rgba(255,255,255,.07);
+  --shade:rgba(0,0,0,.4);
+  --accent:#FF6A45; --accent2:#FF9A5C; --on-accent:#1A0A05; --accent-soft:rgba(255,106,69,.16);
+  --teal:#35CBBB; --sky:#6BA6FF; --ok:#4AD29A; --ok-soft:rgba(74,210,154,.15); --danger:#FF6B6F;
+  --b1:#8A2E17; --b2:#0A6158; --b3:#1D4594;
+  --map-land:#141D26; --map-road:#2A3846; --map-road2:rgba(255,255,255,.06); --map-water:#17405F; --map-park:#173A2C; --map-label:#8FA0AD;
+  --bubble:rgba(44,58,72,.85); color-scheme:dark}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.45 var(--body);overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+h1,h2{font-family:var(--display);text-wrap:balance;letter-spacing:-.02em}
+.ic{flex:none}
+
+#app{height:100%;position:relative;overflow:hidden}
+.bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.75}
+.bg i:nth-child(1){width:70vmax;height:70vmax;left:-30vmax;top:-28vmax;background:var(--b1);animation:drift 26s ease-in-out infinite alternate}
+.bg i:nth-child(2){width:60vmax;height:60vmax;right:-28vmax;top:22%;background:var(--b2);animation:drift 32s ease-in-out infinite alternate-reverse}
+.bg i:nth-child(3){width:64vmax;height:64vmax;left:-10vmax;bottom:-36vmax;background:var(--b3);animation:drift 38s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(6vmax,5vmax) scale(1.12)}}
+
+#view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-inline:16px;padding-block:14px 28px;-webkit-overflow-scrolling:touch}
+.has-tabs #view{padding-bottom:calc(112px + var(--sab))}
+#view.flush{padding:0;overflow:hidden}
+.wrap{max-width:560px;margin-inline:auto;display:flex;flex-direction:column;gap:16px;animation:rise .35s ease both}
+@keyframes rise{from{opacity:.4;transform:translateY(8px)}}
+
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
+  border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-hi),0 10px 34px var(--shade);border-radius:var(--r)}
+
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink2);line-height:1.4}
+.agree input{width:20px;height:20px;margin-top:1px;flex:none}
+.agree .link{color:var(--sky);text-decoration:underline;font-size:inherit}
+.tipbox{font-size:13px;color:var(--ink2);padding:10px 12px;border-radius:var(--r-sm);background:var(--field);border:1px solid var(--hair)}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15.5px;transition:transform .15s,filter .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(180deg,var(--accent2),var(--accent));color:var(--on-accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 22px var(--accent-soft)}
+.btn.sec{background:var(--glass-strong);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-hi)}
+.btn.ok{background:var(--ok-soft);color:var(--ok)}
+.btn.ghost{color:var(--ink2)}
+.btn.danger{color:var(--danger);background:var(--field);border:1px solid var(--hair)}
+.btn.sm{min-height:38px;padding:0 14px;font-size:14px}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none}
+
+/* fields */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.lbl{font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:.02em}
+.inp{width:100%;min-height:50px;padding:12px 16px;border-radius:var(--r-sm);background:var(--field);border:1px solid var(--hair);outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--sky)}
+.inp::placeholder{color:var(--ink3)}
+textarea.inp{resize:vertical;min-height:84px}
+.search{display:flex;align-items:center;gap:10px;padding:0 16px;min-height:50px;border-radius:999px;color:var(--ink2)}
+.search input{flex:1;min-width:0;background:none;border:0;outline:none;height:48px}
+
+/* chips */
+.row{display:flex;gap:8px;align-items:center}
+.scroll-x{display:flex;gap:8px;overflow-x:auto;margin-inline:-16px;padding:2px 16px;scrollbar-width:none}
+.scroll-x::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-weight:500;font-size:14px;
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);transition:background .15s,color .15s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.seg{display:flex;padding:4px;border-radius:999px;background:var(--field);border:1px solid var(--hair)}
+.seg button{flex:1;min-height:38px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--ink2);padding:0 8px}
+.seg button[aria-pressed="true"]{background:var(--glass-strong);color:var(--ink);box-shadow:0 2px 8px var(--shade)}
+
+/* headers */
+.top{display:flex;align-items:center;gap:12px;min-height:48px}
+.top h2{font-size:17px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.sec-h h3{font-size:17px;font-weight:700}
+.sec-h>button{color:var(--accent);font-weight:600;font-size:14px}
+.muted{color:var(--ink2)} .tiny{font-size:12.5px;color:var(--ink3)}
+
+/* avatar */
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;flex:none;background:var(--c,#789);border:2px solid var(--glass-strong)}
+.av.lg{width:84px;height:84px;font-size:28px;border-width:3px}
+.av.sm{width:28px;height:28px;font-size:11px}
+.stack{display:flex}.stack .av+.av{margin-left:-9px}
+
+/* event card */
+.cards{display:flex;flex-direction:column;gap:12px}
+.ev{display:grid;grid-template-columns:56px 1fr;gap:14px;padding:14px;text-align:left;width:100%}
+.ev .tile,.tile{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:27px;background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
+.ev .body{min-width:0;display:flex;flex-direction:column;gap:6px}
+.ev h4{margin:0;font-size:16px;font-weight:700;line-height:1.25}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13.5px;color:var(--ink2)}
+.meta span{display:inline-flex;align-items:center;gap:5px;min-width:0}
+.ev .foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.off{background:var(--field);color:var(--ink3)}
+.empty{padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+
+/* map */
+.mapv{position:relative;overflow:hidden;background:var(--map-land);touch-action:none;user-select:none}
+.mapv.still{touch-action:auto}
+.mapv canvas{position:absolute;inset:0;width:100%;height:100%}
+.pins{position:absolute;inset:0;pointer-events:none}
+.pin{position:absolute;left:0;top:0;width:0;height:0}
+.pin-b{position:absolute;left:-21px;top:-52px;width:42px;height:42px;border-radius:50% 50% 50% 6px;transform:rotate(-45deg);background:var(--glass-strong);border:2.5px solid var(--c);box-shadow:0 6px 14px var(--shade);display:grid;place-items:center;pointer-events:auto;transition:scale .18s}
+.pin-b span{transform:rotate(45deg);font-size:19px;line-height:1}
+.pin-b b{position:absolute;right:-9px;top:-9px;transform:rotate(45deg);min-width:19px;height:19px;padding:0 4px;border-radius:10px;background:var(--c);color:#fff;font-size:11px;display:grid;place-items:center}
+.pin.sel .pin-b{scale:1.25;z-index:2}
+.still .pin-b{pointer-events:none}
+.me-dot{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--sky);border:3px solid #fff;box-shadow:0 0 0 0 var(--sky);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 16px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.map-ctl{position:absolute;right:12px;display:flex;flex-direction:column;gap:8px;z-index:3}
+.map-ctl button{width:44px;height:44px;border-radius:14px;display:grid;place-items:center}
+.center-pin{position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;transform:translate(-50%,-100%);color:var(--accent);filter:drop-shadow(0 6px 6px var(--shade))}
+.mini-map{height:190px;border-radius:var(--r);display:block;width:100%;position:relative;overflow:hidden;border:1px solid var(--line);box-shadow:0 10px 34px var(--shade)}
+.mini-map .mapv{position:absolute;inset:0}
+.mini-map .tag{position:absolute;left:10px;bottom:10px;z-index:3;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center}
+.page-map{position:absolute;inset:0}
+.page-map>.mapv{position:absolute;inset:0}
+.map-top{position:absolute;left:16px;right:16px;top:14px;z-index:4;display:flex;flex-direction:column;gap:10px;max-width:560px;margin-inline:auto}
+.results{padding:6px;display:flex;flex-direction:column;max-height:46vh;overflow:auto}
+.results button{display:flex;gap:12px;align-items:center;text-align:left;padding:10px 12px;border-radius:14px;min-height:48px}
+.results button:hover{background:var(--field)}
+.results b{display:block;font-weight:600}
+.map-card{position:absolute;left:16px;right:16px;bottom:calc(104px + var(--sab));z-index:4;max-width:560px;margin-inline:auto}
+.map-note{position:absolute;left:12px;bottom:calc(100px + var(--sab));z-index:2;font-size:11px;color:var(--map-label)}
+.picker{height:230px;border-radius:var(--r-sm);position:relative;overflow:hidden;border:1px solid var(--hair)}
+.picker .mapv{position:absolute;inset:0}
+.picked{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:var(--r-sm);background:var(--field);border:1px solid var(--hair)}
+
+/* tab bar */
+#tabbar{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(14px + var(--sab));z-index:20;display:flex;align-items:center;gap:2px;padding:7px;border-radius:999px;width:min(calc(100% - 32px),420px);justify-content:space-between}
+#tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;justify-content:center;border-radius:999px;font-size:10.5px;font-weight:600;color:var(--ink3)}
+#tabbar button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+#tabbar .add{flex:none;width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,var(--accent2),var(--accent));color:var(--on-accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 20px var(--accent-soft);margin-inline:4px}
+
+/* welcome / auth */
+.hero{display:flex;flex-direction:column;gap:18px;padding-top:10px}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
+.brand i{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;color:var(--on-accent);font-style:normal}
+.hero h1{font-size:clamp(30px,8.6vw,44px);line-height:1.08}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:16.5px;color:var(--ink2);max-width:36ch}
+.demo-stack{position:relative;display:flex;flex-direction:column;gap:10px}
+.demo-stack .ev:nth-child(2){margin-left:22px;margin-right:-6px;opacity:.9}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.steps div{padding:14px 12px;border-radius:var(--r-sm);font-size:13px;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
+.steps b{color:var(--ink);font-size:14px}
+.form{padding:22px 18px;display:flex;flex-direction:column;gap:14px}
+.link{color:var(--accent);font-weight:600}
+.err{color:var(--danger);font-size:13.5px;font-weight:500}
+
+/* detail */
+.d-head{padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+.d-head h1{font-size:23px;line-height:1.15}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fact{padding:12px 14px;border-radius:var(--r-sm);background:var(--field);border:1px solid var(--hair);min-width:0}
+.fact small{display:flex;gap:6px;align-items:center;color:var(--ink3);font-size:12px;font-weight:600}
+.fact b{display:block;font-size:15px;margin-top:3px;overflow-wrap:anywhere}
+.bar{height:8px;border-radius:9px;background:var(--field);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--teal),var(--ok))}
+.people{display:flex;flex-direction:column}
+.people li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--hair)}
+.people li:last-child{border:0}
+ul{list-style:none;margin:0;padding:0}
+.sticky-act{position:sticky;bottom:calc(8px + var(--sab));display:flex;gap:10px;padding:10px;border-radius:999px;z-index:5}
+.sticky-act .btn{flex:1}
+
+/* chat */
+.room{height:100%;display:flex;flex-direction:column;max-width:760px;margin-inline:auto}
+.room-top{margin:12px 16px 0;padding:8px 14px 8px 6px;display:flex;align-items:center;gap:8px;border-radius:999px;z-index:2}
+.room-top .t{min-width:0;flex:1}.room-top b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:82%;display:flex;flex-direction:column;gap:3px;align-self:flex-start}
+.msg .who{font-size:12px;font-weight:600;color:var(--ink3);padding-left:12px}
+.msg .bub{padding:10px 14px;border-radius:20px 20px 20px 6px;background:var(--bubble);border:1px solid var(--line);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.me{align-self:flex-end}
+.msg.me .bub{background:linear-gradient(180deg,var(--accent2),var(--accent));color:var(--on-accent);border-color:transparent;border-radius:20px 20px 6px 20px}
+.msg time{font-size:11px;color:var(--ink3);padding-inline:12px}
+.msg.me time{text-align:right}
+.msg .ev{margin-top:4px;padding:10px;grid-template-columns:44px 1fr;gap:10px}
+.msg .ev .tile{width:44px;height:44px;font-size:21px;border-radius:14px}
+.typing{display:flex;gap:4px;padding:14px 16px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--ink3);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{40%{transform:translateY(-5px)}}
+.quick{padding:0 16px 8px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.composer{margin:0 16px calc(12px + var(--sab));padding:6px 6px 6px 18px;display:flex;align-items:center;gap:8px;border-radius:999px}
+.composer input{flex:1;min-width:0;background:none;border:0;outline:none;height:44px}
+.composer button{width:44px;height:44px;border-radius:50%;background:linear-gradient(180deg,var(--accent2),var(--accent));color:var(--on-accent);display:grid;place-items:center;flex:none}
+.chat-row{display:flex;gap:12px;align-items:center;padding:12px 14px;text-align:left;width:100%}
+.chat-row .t{flex:1;min-width:0}
+.chat-row p{color:var(--ink2);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-av{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:var(--on-accent);background:linear-gradient(135deg,var(--teal),var(--sky));flex:none}
+.ai-banner{display:flex;gap:14px;align-items:center;padding:14px;text-align:left;width:100%}
+.ai-banner .t{flex:1;min-width:0}
+
+/* profile */
+.p-head{padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.p-head h1{font-size:22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-top:6px}
+.stats div{padding:12px 6px;border-radius:var(--r-sm);background:var(--field);border:1px solid var(--hair)}
+.stats b{display:block;font-family:var(--display);font-size:19px;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--ink2)}
+.menu{padding:6px}
+.menu>button,.menu>.mi{display:flex;align-items:center;gap:14px;width:100%;padding:13px 12px;border-radius:16px;text-align:left;min-height:52px}
+.menu>button:hover{background:var(--field)}
+.menu .g{flex:1;min-width:0;font-weight:500}
+.menu .ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--field);color:var(--ink2);flex:none}
+.stepper{display:flex;align-items:center;gap:6px;padding:4px;border-radius:999px;background:var(--field);border:1px solid var(--hair);align-self:flex-start}
+.stepper b{min-width:44px;text-align:center;font-family:var(--display);font-size:18px;font-variant-numeric:tabular-nums}
+.stepper button{width:42px;height:42px;border-radius:50%;background:var(--glass-strong);display:grid;place-items:center}
+.stars{color:#E8A100;display:inline-flex}
+
+/* sheet & toast */
+#sheet{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,12,18,.35)}
+#sheet .panel{width:100%;max-width:520px;margin:0 8px calc(8px + var(--sab));padding:22px 18px;display:flex;flex-direction:column;gap:14px;background:var(--glass-strong);animation:up .28s cubic-bezier(.2,.9,.3,1) both}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+#sheet h3{font-family:var(--display);font-size:19px}
+.gps-ill{width:76px;height:76px;border-radius:26px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);align-self:center}
+#toast{position:absolute;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;max-width:calc(100% - 32px);text-align:center;background:var(--glass-strong);animation:rise .25s both}
+
+@media (min-width:900px){
+  #tabbar{left:22px;top:50%;bottom:auto;transform:translateY(-50%);flex-direction:column;width:84px;border-radius:32px;gap:6px;padding:10px 8px}
+  #tabbar button{width:100%;flex:none;min-height:60px;border-radius:22px}
+  #tabbar .add{width:56px;margin:6px 0}
+  .has-tabs #view{padding-left:128px;padding-bottom:28px}
+  .has-tabs #view.flush{padding-left:0}
+  .wrap{max-width:640px}
+  .wrap.wide{max-width:1120px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:24px}
+  .wrap.wide .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .wrap.wide .side{position:sticky;top:0}
+  .wrap.wide .mini-map{height:min(70vh,620px)}
+  .map-top{left:130px;margin-inline:0}
+  .map-card{left:130px;margin-inline:0;bottom:24px}
+  .map-note{left:130px;bottom:10px}
+  .wrap.welcome{max-width:980px;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;min-height:calc(100% - 20px)}
+}
+@media (max-width:899px){.wrap.wide .col{display:contents}.wrap.wide .side{order:3}.wrap.wide .feed-h{order:4}.wrap.wide #feed{order:5}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app">
+  <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
+  <main id="view"></main>
+  <nav id="tabbar" class="glass" aria-label="Asosiy menyu" hidden></nav>
+  <div id="sheet" hidden></div>
+  <div id="toast" class="glass" role="status" hidden></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+(()=>{
+'use strict';
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const CFG=window.SHERIK_CONFIG||{};
+const SB=(window.supabase&&CFG.url&&CFG.key&&!/YOUR_/.test(CFG.url))?window.supabase.createClient(CFG.url,CFG.key):null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('sherik:'+k);return v?JSON.parse(v):d}catch(e){return d}},
+             set(k,v){try{localStorage.setItem('sherik:'+k,JSON.stringify(v))}catch(e){}},
+             del(k){try{localStorage.removeItem('sherik:'+k)}catch(e){}}};
+const I={
+home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+map:'<path d="M9 4 3 6.5V20l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',
+plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>',
+chat:'<path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/>',
+pin:'<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-5.5 6.5-5.5s6.5 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2.1.6 3.5 2.3 3.5 5.2"/>',
+back:'<path d="m15 5-7 7 7 7"/>', chev:'<path d="m9 5 7 7-7 7"/>',
+send:'<path d="M4 12 20 4l-6 16-3-7z"/>',
+spark:'<path d="M11 3l1.9 5.6L18.5 10.5l-5.6 1.9L11 18l-1.9-5.6L3.5 10.5l5.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+locate:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/>',
+check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>', x:'<path d="M6 6l12 12M18 6 6 18"/>',
+out:'<path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5M10 8l-4 4 4 4M6 12h10"/>',
+edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+moon:'<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+star:'<path fill="currentColor" d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1L3.2 9.4l6.1-.8z"/>',
+level:'<path d="M5 20v-5M12 20V10M19 20V4"/>'
+};
+const ic=(n,s=22)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+
+/* ---------- data ---------- */
+const CITY={lat:41.3111,lng:69.2797}, KY=1/Math.cos(41.31*Math.PI/180);
+const CATS=[
+ {id:'tennis',n:'Tennis',e:'🎾',c:'#7BA800',k:['tennis','tenis','kort']},
+ {id:'futbol',n:'Futbol',e:'⚽',c:'#1E9E63',k:['futbol','football','to\'p']},
+ {id:'basket',n:'Basketbol',e:'🏀',c:'#E8731A',k:['basket']},
+ {id:'run',n:'Yugurish',e:'🏃',c:'#2F7BF0',k:['yugur','run','beg']},
+ {id:'velo',n:'Velosiped',e:'🚴',c:'#8A56E8',k:['velo','bike']},
+ {id:'voley',n:'Voleybol',e:'🏐',c:'#D9A400',k:['voley','volley']},
+ {id:'ping',n:'Stol tennisi',e:'🏓',c:'#E0457B',k:['stol tennis','ping']},
+ {id:'chess',n:'Shaxmat',e:'♟️',c:'#5E6E7C',k:['shaxmat','chess']},
+ {id:'walk',n:'Sayr',e:'🥾',c:'#0A9C8F',k:['sayr','piyoda','walk']},
+ {id:'other',n:'Boshqa',e:'✨',c:'#F04A24',k:[]}];
+const cat=id=>CATS.find(c=>c.id===id)||CATS[CATS.length-1];
+const LEVELS=["Farqi yo'q",'Boshlovchi',"O'rta",'Kuchli'];
+const PLACES=[
+ ['Yunusobod','tuman',41.3647,69.2885],['Chilonzor','tuman',41.2756,69.2034],["Mirzo Ulug'bek",'tuman',41.3385,69.3347],
+ ['Yashnobod','tuman',41.2930,69.3300],['Sergeli','tuman',41.2260,69.2200],['Olmazor','tuman',41.3540,69.2200],
+ ['Shayxontohur','tuman',41.3240,69.2300],['Mirobod','tuman',41.2880,69.2850],['Yakkasaroy','tuman',41.2850,69.2500],
+ ['Yunusobod tennis korti','sport',41.3585,69.2860],['Yunusobod sport majmuasi','sport',41.3690,69.2950],
+ ['Paxtakor stadioni','sport',41.3169,69.2630],['Bunyodkor stadioni','sport',41.2797,69.2123],['Humo Arena','sport',41.2960,69.2470],
+ ['Amir Temur xiyoboni','park',41.3111,69.2797],['Ekopark','park',41.3120,69.2960],["Botanika bog'i",'park',41.3440,69.3140],
+ ['Tashkent City Park','park',41.3156,69.2486],["Alisher Navoiy milliy bog'i",'park',41.3010,69.2440],['Anhor Lokomotiv parki','park',41.3200,69.2640],
+ ['Chorsu bozori','joy',41.3268,69.2352],['Minor masjidi','joy',41.3378,69.2756],['Toshkent teleminorasi','joy',41.3456,69.2847],['Magic City','joy',41.3040,69.2455]
+].map(p=>({name:p[0],type:p[1],lat:p[2],lng:p[3]}));
+const place=n=>PLACES.find(p=>p.name===n);
+const AVC=['#E8731A','#2F7BF0','#0A9C8F','#8A56E8','#E0457B','#1E9E63','#C28A00','#5E6E7C'];
+const avc=n=>AVC[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC.length];
+const av=(n,cls='')=>`<span class="av ${cls}" style="--c:${avc(n)}" title="${esc(n)}">${esc(n.trim().slice(0,1).toUpperCase())}</span>`;
+
+const at=h=>{const d=new Date(Date.now()+h*36e5);d.setMinutes(d.getMinutes()<30?30:60,0,0);return d};
+const seed=(id,c,title,pl,h,need,people,host,level,note)=>{const p=place(pl);return{id,cat:c,title,place:pl,lat:p.lat,lng:p.lng,when:at(h),need,people,host,level,note}};
+const SEED=[];
+const PAST=[];
+
+/* ---------- state ---------- */
+const S={
+ user:null,uid:null,
+ loc:store.get('loc',null),
+ joined:new Set(),
+ events:[],
+ chats:{}, f:{cat:null,day:'all',q:''}, draft:null, stack:[], route:{name:'welcome'}, sel:null, hist:'up', mapQ:''
+};
+const save=()=>{};
+const ev=id=>S.events.find(e=>e.id===id);
+const left=e=>Math.max(0,e.need-e.people.length);
+const upcoming=()=>S.events.filter(e=>e.when>Date.now()-36e5);
+const me=()=>S.user?.name||'Mehmon';
+
+const MON=['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'], WD=['Ya','Du','Se','Ch','Pa','Ju','Sh'];
+const sod=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+const dayDiff=d=>Math.round((sod(d)-sod(new Date()))/864e5);
+const hm=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+const fmtDay=d=>{const n=dayDiff(d);return n===0?'Bugun':n===1?'Ertaga':n===-1?'Kecha':`${d.getDate()}-${MON[d.getMonth()]}`};
+const fmtWhen=d=>`${fmtDay(d)}, ${hm(d)}`;
+const km=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b.lat-a.lat)*r,dg=(b.lng-a.lng)*r;
+  const h=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const fmtKm=k=>k<1?`${Math.round(k*100)*10} m`:`${k.toFixed(1)} km`;
+const dist=e=>S.loc?km(S.loc,e):0;
+const nearest=(lat,lng,type)=>{let b=null,bd=1e9;for(const p of PLACES){if(type&&p.type!==type)continue;const d=km({lat,lng},p);if(d<bd){bd=d;b=p}}return{p:b,d:bd}};
+const placeLabel=(lat,lng)=>{const n=nearest(lat,lng);return n.d<.35?n.p.name:`${n.p.name} yaqinida`};
+
+/* ---------- toast / sheet ---------- */
+let toastT;
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2800)}
+function sheet(html){const s=$('#sheet');s.innerHTML=`<div class="panel glass" role="dialog" aria-modal="true">${html}</div>`;s.hidden=false}
+function closeSheet(){$('#sheet').hidden=true;$('#sheet').innerHTML=''}
+
+/* ---------- location ---------- */
+function setLoc(lat,lng,demo){S.loc={lat,lng,name:nearest(lat,lng,'tuman').p.name,demo:!!demo};store.set('loc',S.loc)}
+function locate(done){
+  const fb=()=>{setLoc(41.3647,69.2885,true);toast('GPS olinmadi. Demo joylashuv: Yunusobod');done&&done()};
+  try{
+    if(!navigator.geolocation)return fb();
+    navigator.geolocation.getCurrentPosition(p=>{
+      const {latitude:lat,longitude:lng}=p.coords;
+      if(km({lat,lng},CITY)>60)return fb();
+      setLoc(lat,lng,false);toast(`Joylashuv aniqlandi: ${S.loc.name}`);done&&done();
+    },fb,{enableHighAccuracy:true,timeout:7000,maximumAge:60000});
+  }catch(e){fb()}
+}
+function askGps(next){
+  sheet(`<div class="gps-ill">${ic('locate',38)}</div>
+   <h3>Joylashuvni yoqing</h3>
+   <p class="muted">Sherik sizga eng yaqin tadbirlarni ko'rsatishi uchun turgan joyingizni bilishi kerak. Joylashuvingiz boshqalarga aniq ko'rsatilmaydi, faqat masofa hisoblanadi.</p>
+   <button class="btn pri block" data-act="gps-ok">${ic('locate',20)} GPS ni yoqish</button>
+   <button class="btn ghost block" data-act="gps-skip">Hozircha Yunusobod bilan davom etish</button>`);
+  S.afterGps=next;
+}
+
+/* ---------- map ---------- */
+const maps=[];
+class MapView{
+  constructor(el,o={}){
+    this.el=el;this.o=o;this.c={lat:o.lat??CITY.lat,lng:o.lng??CITY.lng};this.z=o.z??12;this.pins=[];this.ptr=new Map();
+    el.classList.add('mapv');if(o.still)el.classList.add('still');
+    this.cv=document.createElement('canvas');this.layer=document.createElement('div');this.layer.className='pins';
+    this.meEl=document.createElement('div');this.meEl.className='pin';this.meEl.innerHTML='<div class="me-dot"></div>';this.meEl.hidden=true;
+    this.layer.append(this.meEl);el.append(this.cv,this.layer);
+    if(o.controls){const c=document.createElement('div');c.className='map-ctl';c.style.bottom=o.ctlBottom||'12px';
+      c.innerHTML=`<button class="glass" aria-label="Kattalashtirish">${ic('plus',20)}</button><button class="glass" aria-label="Kichiklashtirish">${ic('minus',20)}</button><button class="glass" aria-label="Mening joyim">${ic('locate',20)}</button>`;
+      const b=c.children;b[0].onclick=()=>this.fly(this.c.lat,this.c.lng,this.z+1);b[1].onclick=()=>this.fly(this.c.lat,this.c.lng,this.z-1);
+      b[2].onclick=()=>{if(S.loc)this.fly(S.loc.lat,S.loc.lng,14)};el.append(c)}
+    if(!o.still)this.bind();
+    this.ro=new ResizeObserver(()=>this.resize());this.ro.observe(el);this.resize();maps.push(this);
+  }
+  destroy(){this.ro.disconnect();cancelAnimationFrame(this.raf)}
+  resize(){const d=Math.min(2,devicePixelRatio||1);this.w=this.el.clientWidth;this.h=this.el.clientHeight;if(!this.w||!this.h)return;
+    this.cv.width=this.w*d;this.cv.height=this.h*d;this.d=d;this.draw()}
+  get s(){return 256*Math.pow(2,this.z)/360}
+  xy(lat,lng){const s=this.s;return[this.w/2+(lng-this.c.lng)*s,this.h/2-(lat-this.c.lat)*s*KY]}
+  colors(){if(this.col)return this.col;const cs=getComputedStyle(document.documentElement),g=n=>cs.getPropertyValue(n).trim();
+    return this.col={land:g('--map-land'),road:g('--map-road'),road2:g('--map-road2'),water:g('--map-water'),park:g('--map-park'),label:g('--map-label')}}
+  line(x,pts,w,col){x.beginPath();pts.forEach((p,i)=>{const[a,b]=this.xy(p[0],p[1]);i?x.lineTo(a,b):x.moveTo(a,b)});x.lineWidth=w;x.strokeStyle=col;x.stroke()}
+  draw(){
+    if(!this.w)return;const x=this.cv.getContext('2d'),c=this.colors(),s=this.s;
+    x.setTransform(this.d,0,0,this.d,0,0);x.lineCap='round';x.lineJoin='round';
+    x.fillStyle=c.land;x.fillRect(0,0,this.w,this.h);
+    // local street grid (stylised)
+    if(this.z>=11.6){const step=this.z>=13.6?.004:.008,th=.35,co=Math.cos(th),si=Math.sin(th),R=.3;
+      const P=(u,v)=>[CITY.lat+(u*si+v*co)/KY,CITY.lng+(u*co-v*si)];
+      x.beginPath();for(let d=-R;d<=R;d+=step){let a=this.xy(...P(d,-R)),b=this.xy(...P(d,R));x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);
+        a=this.xy(...P(-R,d));b=this.xy(...P(R,d));x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1])}
+      x.lineWidth=this.z>=13.6?2:1;x.strokeStyle=c.road2;x.stroke()}
+    // parks
+    x.fillStyle=c.park;for(const p of PLACES)if(p.type==='park'){const[a,b]=this.xy(p.lat,p.lng);x.beginPath();x.ellipse(a,b,s*.0052,s*.0044,.4,0,7);x.fill()}
+    // water
+    this.line(x,[[41.39,69.262],[41.37,69.263],[41.345,69.261],[41.327,69.268],[41.312,69.262],[41.298,69.255],[41.28,69.262],[41.255,69.27],[41.22,69.262]],Math.max(3,s*.0011),c.water);
+    this.line(x,[[41.40,69.47],[41.36,69.42],[41.30,69.385],[41.25,69.345],[41.20,69.30],[41.15,69.25]],Math.max(5,s*.0026),c.water);
+    // major roads
+    const W=Math.max(2.5,s*.0007);
+    const ring=(rx,ry,w)=>{const[a,b]=this.xy(41.305,69.275);x.beginPath();x.ellipse(a,b,rx*s,ry*s*KY,-.2,0,7);x.lineWidth=w;x.strokeStyle=c.road;x.stroke()};
+    ring(.105,.066,W*1.5);ring(.036,.024,W);
+    for(const p of PLACES)if(p.type==='tuman'){const k=1.7;this.line(x,[[CITY.lat,CITY.lng],[CITY.lat+(p.lat-CITY.lat)*k,CITY.lng+(p.lng-CITY.lng)*k]],W,c.road)}
+    // labels
+    x.textAlign='center';x.fillStyle=c.label;
+    if(this.z>=10.8){x.font='600 11px Onest,system-ui,sans-serif';for(const p of PLACES)if(p.type==='tuman'){const[a,b]=this.xy(p.lat,p.lng);x.fillText(p.name.toUpperCase(),a,b+4)}}
+    if(this.z>=12.6){x.font='500 11px Onest,system-ui,sans-serif';for(const p of PLACES)if(p.type!=='tuman'){const[a,b]=this.xy(p.lat,p.lng);
+      x.beginPath();x.arc(a,b,2.5,0,7);x.fill();x.fillText(p.name,a,b+16)}}
+    for(const p of this.pins){const[a,b]=this.xy(p.lat,p.lng);p.el.style.transform=`translate(${a}px,${b}px)`}
+    if(this.me){const[a,b]=this.xy(this.me.lat,this.me.lng);this.meEl.style.transform=`translate(${a}px,${b}px)`}
+  }
+  setMe(l){this.me=l;this.meEl.hidden=!l;this.draw()}
+  setPins(list,onTap){for(const p of this.pins)p.el.remove();this.pins=list.map(e=>{const c=cat(e.cat),el=document.createElement('div');el.className='pin';el.dataset.id=e.id;
+      el.innerHTML=`<button class="pin-b" style="--c:${c.c}" aria-label="${esc(e.title)}"><span>${c.e}</span>${left(e)?`<b>${left(e)}</b>`:''}</button>`;
+      if(onTap)el.firstChild.onclick=()=>onTap(e);this.layer.append(el);return{lat:e.lat,lng:e.lng,el,id:e.id}});this.draw()}
+  select(id){for(const p of this.pins)p.el.classList.toggle('sel',p.id===id)}
+  clamp(){this.z=Math.max(10.3,Math.min(16,this.z));this.c.lat=Math.max(41.1,Math.min(41.5,this.c.lat));this.c.lng=Math.max(69,Math.min(69.55,this.c.lng))}
+  fly(lat,lng,z=this.z){cancelAnimationFrame(this.raf);const a={...this.c,z:this.z},t0=performance.now(),T=matchMedia('(prefers-reduced-motion:reduce)').matches?1:420;
+    const f=t=>{let k=Math.min(1,(t-t0)/T);k=1-Math.pow(1-k,3);this.c.lat=a.lat+(lat-a.lat)*k;this.c.lng=a.lng+(lng-a.lng)*k;this.z=a.z+(z-a.z)*k;this.clamp();this.draw();
+      if(k<1)this.raf=requestAnimationFrame(f);else this.o.onMove&&this.o.onMove(this.c)};this.raf=requestAnimationFrame(f)}
+  bind(){const el=this.el,P=this.ptr;
+    el.addEventListener('pointerdown',e=>{if(e.target.closest('.pin-b,.map-ctl'))return;try{el.setPointerCapture(e.pointerId)}catch(_){}P.set(e.pointerId,{x:e.clientX,y:e.clientY});cancelAnimationFrame(this.raf)});
+    el.addEventListener('pointermove',e=>{const p=P.get(e.pointerId);if(!p)return;
+      if(P.size===1){const s=this.s;this.c.lng-=(e.clientX-p.x)/s;this.c.lat+=(e.clientY-p.y)/(s*KY)}
+      else if(P.size===2){const o=[...P.entries()].find(v=>v[0]!==e.pointerId)[1],d0=Math.hypot(p.x-o.x,p.y-o.y),d1=Math.hypot(e.clientX-o.x,e.clientY-o.y);if(d0>0)this.z+=Math.log2(d1/d0)}
+      p.x=e.clientX;p.y=e.clientY;this.clamp();this.draw();this.o.onDrag&&this.o.onDrag()});
+    const up=e=>{if(P.delete(e.pointerId)&&!P.size)this.o.onMove&&this.o.onMove(this.c)};
+    el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+    el.addEventListener('wheel',e=>{e.preventDefault();this.z-=e.deltaY*.003;this.clamp();this.draw();this.o.onMove&&this.o.onMove(this.c)},{passive:false});
+  }
+}
+const recolor=()=>maps.forEach(m=>{m.col=null;m.draw()});
+try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',recolor)}catch(e){}
+new MutationObserver(recolor).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(recolor);
+
+/* ---------- shared pieces ---------- */
+function evCard(e,o={}){
+  const c=cat(e.cat),j=S.joined.has(e.id),l=left(e),all=[e.host,...e.people];
+  const state=e.mine?`<span class="pill ok">Siz tashkilotchisiz</span>`:j?`<span class="pill ok">${ic('check',14)} Qo'shildingiz</span>`:l?`<span class="pill">${l} joy qoldi</span>`:`<span class="pill off">To'ldi</span>`;
+  return `<button class="ev glass" data-go="event" data-id="${e.id}">
+    <span class="tile" style="--c:${c.c}">${c.e}</span>
+    <span class="body"><h4>${esc(e.title)}</h4>
+      <span class="meta"><span>${ic('clock',15)} ${fmtWhen(e.when)}</span><span>${ic('pin',15)} ${esc(e.place)}${S.loc?` · ${fmtKm(dist(e))}`:''}</span></span>
+      ${o.compact?'':`<span class="foot"><span class="stack">${all.slice(0,4).map(n=>av(n==='__me'?me():n,'sm')).join('')}</span>${state}</span>`}
+    </span></button>`;
+}
+function filtered(){
+  const q=S.f.q.trim().toLowerCase();
+  return upcoming().filter(e=>(!S.f.cat||e.cat===S.f.cat)&&(S.f.day==='all'||dayDiff(e.when)===(S.f.day==='today'?0:1))
+    &&(!q||(e.title+' '+e.place+' '+cat(e.cat).n).toLowerCase().includes(q))).sort((a,b)=>dist(a)-dist(b));
+}
+const feedHtml=()=>{const l=filtered();return l.length?l.map(e=>evCard(e)).join(''):
+  `<div class="empty glass"><b>Bu filtr bo'yicha tadbir yo'q</b><p class="muted">Birinchi bo'lib o'zingiz e'lon qiling, sheriklar sizni topadi.</p><button class="btn pri sm" data-go="create">${ic('plus',18)} Tadbir qo'shish</button></div>`};
+const topBar=(t,right='')=>`<div class="top"><button class="icon-btn glass" data-act="back" aria-label="Orqaga">${ic('back')}</button><h2>${t}</h2>${right}</div>`;
+
+/* ---------- pages ---------- */
+const P={};
+P.welcome=()=>({html:`<div class="wrap welcome"><div class="hero">
+   <div class="brand"><i>${ic('users',20)}</i>Sherik</div>
+   <h1>Sherik yetishmayaptimi? <em>Yaqiningizdan toping.</em></h1>
+   <p>Tennis, futbol, yugurish yoki shaxmat. Qayerga borayotganingizni yozing, nechta sherik kerakligini belgilang. Atrofingizdagi odamlar qo'shiladi.</p>
+   <div style="display:flex;flex-direction:column;gap:10px;max-width:380px">
+     <button class="btn pri block" data-go="register">Ro'yxatdan o'tish</button>
+     <button class="btn sec block" data-go="login">Kirish</button></div></div>
+   <div style="display:flex;flex-direction:column;gap:14px">
+     <div class="steps"><div class="glass"><b>Joyni aniqlang</b>GPS yoqiladi, yaqin tadbirlar chiqadi</div><div class="glass"><b>E'lon bering</b>Qayerga, qachon, nechta sherik</div><div class="glass"><b>Chatda kelishing</b>Qo'shilganlar bilan yozishing</div></div>
+   </div></div>`});
+
+P.setup=()=>({html:`<div class="wrap"><div class="form glass"><h1 style="font-size:22px">Ilova hali sozlanmagan</h1><p class="muted">config.js faylida Supabase manzili va kalitini kiriting. Qadamlar SETUP.md faylida.</p></div></div>`});
+
+P.login=()=>({html:`<div class="wrap">${topBar('Kirish')}
+  <form class="form glass" data-form="login" novalidate>
+   <div><h1 style="font-size:24px">Xush kelibsiz</h1><p class="muted" style="margin-top:6px">Email va parolingiz bilan kiring.</p></div>
+   <div class="field"><label for="l-email">Email</label><input class="inp" id="l-email" type="email" inputmode="email" placeholder="siz@mail.com" autocomplete="email"></div>
+   <div class="field"><label for="l-pass">Parol</label><input class="inp" id="l-pass" type="password" placeholder="Kamida 8 ta belgi" autocomplete="current-password"></div>
+   <p class="err" id="l-err" hidden></p>
+   <button class="btn pri block" type="submit">Kirish</button>
+   <button class="btn ghost sm" type="button" data-act="forgot">Parolni unutdingizmi?</button>
+  </form>
+  <p style="text-align:center" class="muted">Hisobingiz yo'qmi? <button class="link" data-go="register">Ro'yxatdan o'ting</button></p></div>`});
+
+P.register=()=>({html:`<div class="wrap">${topBar("Ro'yxatdan o'tish")}
+  <form class="form glass" data-form="register" novalidate>
+   <div><h1 style="font-size:24px">Hisob yarating</h1><p class="muted" style="margin-top:6px">Bir daqiqa vaqt oladi.</p></div>
+   <div class="field"><label for="r-name">Ismingiz</label><input class="inp" id="r-name" placeholder="Masalan, Javohir" autocomplete="given-name"></div>
+   <div class="field"><label for="r-email">Email</label><input class="inp" id="r-email" type="email" inputmode="email" placeholder="siz@mail.com" autocomplete="email"></div>
+   <div class="field"><label for="r-pass">Parol</label><input class="inp" id="r-pass" type="password" placeholder="Kamida 8 ta belgi" autocomplete="new-password"></div>
+   <div class="field"><span class="lbl">Qaysi mashg'ulotlar sizga qiziq?</span>
+     <div class="chips-wrap" id="r-sports">${CATS.slice(0,9).map(c=>`<button type="button" class="chip" aria-pressed="false" data-act="toggle" data-v="${c.id}">${c.e} ${c.n}</button>`).join('')}</div></div>
+  <label class="agree"><input type="checkbox" id="r-terms"><span>Men 18 yoshdan oshganman va <button type="button" class="link" data-act="terms">foydalanish shartlari</button>ga roziman.</span></label>
+   <p class="err" id="r-err" hidden></p>
+   <button class="btn pri block" type="submit">Davom etish</button>
+  </form>
+  <p style="text-align:center" class="muted">Hisobingiz bormi? <button class="link" data-go="login">Kiring</button></p></div>`});
+
+P.home=()=>({tabs:1,html:`<div class="wrap wide">
+  <div class="col">
+   <div class="top"><div style="flex:1;min-width:0"><button class="row tiny" data-act="relocate" style="gap:5px;font-weight:600">${ic('pin',15)} ${esc(S.loc?.name||'Joylashuv yo\'q')}${S.loc?.demo?' (demo)':''}</button>
+     <h1 style="font-size:24px;margin-top:2px">Salom, ${esc(me())}</h1></div>
+     <button data-go="profile" aria-label="Profil">${av(me())}</button></div>
+   <label class="search glass">${ic('search',20)}<input id="q-home" type="search" placeholder="Tadbir yoki joy qidirish" value="${esc(S.f.q)}" aria-label="Qidirish"></label>
+   <div class="scroll-x" id="cats"><button class="chip" data-act="cat" data-v="" aria-pressed="${!S.f.cat}">Hammasi</button>${CATS.slice(0,9).map(c=>`<button class="chip" data-act="cat" data-v="${c.id}" aria-pressed="${S.f.cat===c.id}">${c.e} ${c.n}</button>`).join('')}</div>
+   <div class="sec-h feed-h"><h3>Yaqin atrofda</h3>
+     <div class="seg" style="min-width:210px" id="days">${[['all','Hammasi'],['today','Bugun'],['tom','Ertaga']].map(d=>`<button data-act="day" data-v="${d[0]}" aria-pressed="${S.f.day===d[0]}">${d[1]}</button>`).join('')}</div></div>
+   <div class="cards" id="feed">${feedHtml()}</div>
+  </div>
+  <div class="col side"><button class="mini-map" data-go="map" aria-label="Xaritani ochish"><span id="mini"></span><span class="tag glass">${ic('map',16)} Xaritada ko'rish</span></button></div>
+ </div>`,
+ mount(){const m=new MapView($('#mini'),{still:true,lat:S.loc?.lat,lng:S.loc?.lng,z:11.6});m.setMe(S.loc);m.setPins(filtered());P.home.map=m}});
+
+P.map=()=>({tabs:1,flush:1,html:`<div class="page-map"><div id="bigmap"></div>
+  <div class="map-top"><label class="search glass">${ic('search',20)}<input id="q-map" type="search" placeholder="Joy yoki tadbir qidirish" aria-label="Xaritada qidirish" autocomplete="off"></label>
+   <div class="results glass" id="map-res" hidden></div>
+   <div class="scroll-x" id="map-cats" style="margin-inline:0;padding-inline:0"><button class="chip" data-act="mcat" data-v="" aria-pressed="${!S.f.cat}">Hammasi</button>${CATS.slice(0,9).map(c=>`<button class="chip" data-act="mcat" data-v="${c.id}" aria-pressed="${S.f.cat===c.id}">${c.e} ${c.n}</button>`).join('')}</div><span class="tiny" style="color:var(--map-label)">Demo xarita · Toshkent</span></div>
+  <div class="map-card" id="map-card" hidden></div></div>`,
+ mount(){const sel=e=>{S.sel=e.id;m.select(e.id);m.fly(e.lat,e.lng,Math.max(m.z,13.2));$('#map-card').innerHTML=evCard(e);$('#map-card').hidden=false};
+   const m=new MapView($('#bigmap'),{controls:true,ctlBottom:'calc(290px + var(--sab))',lat:S.loc?.lat,lng:S.loc?.lng,z:12.4,onDrag(){$('#map-res').hidden=true}});
+   m.setMe(S.loc);P.map.map=m;P.map.sel=sel;P.map.pins=()=>m.setPins(upcoming().filter(e=>!S.f.cat||e.cat===S.f.cat),sel);P.map.pins();
+   if(S.sel&&ev(S.sel))sel(ev(S.sel))}});
+
+function newDraft(c){const l=S.loc||CITY;return{cat:c||null,title:'',lat:l.lat,lng:l.lng,place:placeLabel(l.lat,l.lng),day:0,time:hm(at(2)),need:1,level:0,note:''}}
+P.create=()=>{const d=S.draft||(S.draft=newDraft());
+ const days=[...Array(7)].map((_,i)=>{const x=new Date(Date.now()+i*864e5);return`<button type="button" class="chip" data-act="d-day" data-v="${i}" aria-pressed="${d.day===i}">${i===0?'Bugun':i===1?'Ertaga':WD[x.getDay()]+', '+x.getDate()+'-'+MON[x.getMonth()]}</button>`}).join('');
+ return{tabs:1,html:`<div class="wrap"><div class="top"><h1 style="font-size:24px">Tadbir qo'shish</h1></div>
+  <form class="form glass" data-form="create" novalidate>
+   <div class="field"><span class="lbl">Nima qilmoqchisiz?</span><div class="chips-wrap" id="c-cats">${CATS.map(c=>`<button type="button" class="chip" data-act="d-cat" data-v="${c.id}" aria-pressed="${d.cat===c.id}">${c.e} ${c.n}</button>`).join('')}</div></div>
+   <div class="field"><label for="c-title">Sarlavha</label><input class="inp" id="c-title" maxlength="60" placeholder="Masalan, Tennisga sherik kerak" value="${esc(d.title)}"></div>
+   <div class="field"><label for="c-q">Qayerda?</label>
+     <label class="search" style="background:var(--field);border:1px solid var(--hair)">${ic('search',19)}<input id="c-q" type="search" placeholder="Joy nomini yozing: Ekopark, Chilonzor..." autocomplete="off"></label>
+     <div class="results" id="c-res" hidden style="background:var(--field);border-radius:var(--r-sm)"></div>
+     <div class="picker"><div id="pick"></div><span class="center-pin"><svg width="38" height="46" viewBox="0 0 38 46"><path fill="currentColor" d="M19 46S36 30 36 18A17 17 0 0 0 2 18c0 12 17 28 17 28z"/><circle cx="19" cy="18" r="6.5" fill="#fff"/></svg></span></div>
+     <div class="picked">${ic('pin',20)}<div style="flex:1;min-width:0"><b id="c-place">${esc(d.place)}</b><div class="tiny">Xaritani suring, belgi tanlangan joyni ko'rsatadi</div></div>
+       <button type="button" class="btn sec sm" data-act="d-here">${ic('locate',17)} Men</button></div></div>
+   <div class="field"><span class="lbl">Qachon?</span><div class="scroll-x" id="c-days" style="margin-inline:-18px;padding-inline:18px">${days}</div>
+     <label class="lbl" for="c-time" style="margin-top:6px">Soat nechida?</label><input class="inp" id="c-time" type="time" value="${d.time}" style="max-width:170px"></div>
+   <div class="field"><span class="lbl">Nechta sherik kerak?</span><div class="stepper"><button type="button" data-act="d-need" data-v="-1" aria-label="Kamaytirish">${ic('minus',18)}</button><b id="c-need">${d.need}</b><button type="button" data-act="d-need" data-v="1" aria-label="Ko'paytirish">${ic('plus',18)}</button></div></div>
+   <div class="field"><span class="lbl">Daraja</span><div class="seg" id="c-level">${LEVELS.map((l,i)=>`<button type="button" data-act="d-level" data-v="${i}" aria-pressed="${d.level===i}">${l}</button>`).join('')}</div></div>
+   <div class="field"><label for="c-note">Izoh (ixtiyoriy)</label><textarea class="inp" id="c-note" maxlength="240" placeholder="Nima olib kelish kerak, qayerda uchrashamiz...">${esc(d.note)}</textarea></div>
+   <p class="err" id="c-err" hidden></p>
+   <button class="btn pri block" type="submit">E'lon qilish</button>
+  </form></div>`,
+ mount(){const m=new MapView($('#pick'),{controls:true,lat:d.lat,lng:d.lng,z:13.4,onMove(c){d.lat=c.lat;d.lng=c.lng;d.place=placeLabel(c.lat,c.lng);const el=$('#c-place');if(el)el.textContent=d.place}});m.setMe(S.loc);P.create.map=m}}};
+
+P.event=r=>{const e=ev(r.id);if(!e)return{html:`<div class="wrap">${topBar('Tadbir')}<div class="empty glass"><b>Tadbir topilmadi</b><p class="muted">U bekor qilingan bo'lishi mumkin.</p><button class="btn pri sm" data-go="home">Asosiy sahifaga</button></div></div>`};
+ const c=cat(e.cat),j=S.joined.has(e.id),l=left(e),taken=e.need-l,host=e.mine?me():e.host;
+ const ppl=[[host,'Tashkilotchi',e.hostId],...e.people.map((n,i)=>[n,e.pids[i]===S.uid?'Siz':'Ishtirokchi',e.pids[i]])];
+ return{html:`<div class="wrap">${topBar(c.n)}
+  <div class="d-head glass"><div class="row" style="gap:14px;align-items:flex-start"><span class="tile" style="--c:${c.c}">${c.e}</span><div style="min-width:0;flex:1"><h1>${esc(e.title)}</h1><p class="muted" style="margin-top:4px">${esc(host)} taklif qilmoqda</p></div></div>
+   <div class="facts"><div class="fact"><small>${ic('cal',14)} Vaqt</small><b>${fmtWhen(e.when)}</b></div><div class="fact"><small>${ic('pin',14)} Masofa</small><b>${S.loc?fmtKm(dist(e)):'Aniqlanmagan'}</b></div>
+     <div class="fact"><small>${ic('users',14)} Sheriklar</small><b>${taken} / ${e.need}</b></div><div class="fact"><small>${ic('level',14)} Daraja</small><b>${LEVELS[e.level]}</b></div></div>
+   <div><div class="bar"><i style="width:${Math.round(taken/e.need*100)}%"></i></div><p class="tiny" style="margin-top:6px">${l?`Yana ${l} ta sherik kerak`:"Barcha joylar band"}</p></div>
+   ${e.note?`<p>${esc(e.note)}</p>`:''}
+   <p class="tipbox">Xavfsizlik: birinchi uchrashuvni ochiq, gavjum joyda o'tkazing va yaqinlaringizga qayerga borayotganingizni ayting.</p></div>
+  <button class="mini-map" data-act="show-on-map" data-id="${e.id}" aria-label="Xaritada ochish"><span id="dmap"></span><span class="tag glass">${ic('pin',16)} ${esc(e.place)}</span></button>
+  <div class="glass" style="padding:8px 18px"><ul class="people">${ppl.map(p=>`<li>${av(p[0])}<div style="flex:1;min-width:0"><b>${esc(p[0])}</b><div class="tiny">${p[1]}</div></div>${p[2]===S.uid?'':`<button class="btn ghost sm" data-act="person" data-n="${esc(p[0])}" data-uid="${p[2]}" data-id="${e.id}">Shikoyat</button>`}</li>`).join('')}</ul></div>
+  <div class="sticky-act glass">${e.mine?`<button class="btn sec" data-go="chat" data-id="${e.id}">${ic('chat',19)} Chat</button><button class="btn danger" data-act="cancel-ev" data-id="${e.id}">Bekor qilish</button>`
+    :j?`<button class="btn pri" data-go="chat" data-id="${e.id}">${ic('chat',19)} Chatga o'tish</button><button class="btn danger" data-act="leave" data-id="${e.id}">Chiqish</button>`
+    :`<button class="btn pri" data-act="join" data-id="${e.id}" ${l?'':'disabled'}>${l?"Qo'shilish":"Joy qolmadi"}</button>`}</div></div>`,
+ mount(){const m=new MapView($('#dmap'),{still:true,lat:e.lat,lng:e.lng,z:13.6});m.setMe(S.loc);m.setPins([e])}}};
+
+function chatFor(id){return S.chats[id]||(S.chats[id]=[])}
+const myChats=()=>S.events.filter(e=>e.mine||S.joined.has(e.id));
+P.chats=()=>{const l=myChats();return{tabs:1,html:`<div class="wrap"><div class="top"><h1 style="font-size:24px">Chatlar</h1></div>
+  ${l.length?`<div class="cards">${l.map(e=>{const c=cat(e.cat),m=chatFor(e.id),last=m[m.length-1];return`<button class="chat-row glass" data-go="chat" data-id="${e.id}"><span class="tile" style="--c:${c.c};width:48px;height:48px;font-size:23px;border-radius:16px">${c.e}</span>
+     <span class="t"><b>${esc(e.title)}</b><p>${last?esc((last.from==='me'?'Siz':last.from)+': '+last.text):"Hali xabar yo'q. Birinchi bo'lib yozing."}</p></span><span class="tiny">${last?hm(last.t):''}</span></button>`}).join('')}</div>`
+   :`<div class="empty glass"><b>Hali chat yo'q</b><p class="muted">Tadbirga qo'shilsangiz, uning guruh chati shu yerda paydo bo'ladi.</p><button class="btn pri sm" data-go="home">Tadbirlarni ko'rish</button></div>`}</div>`,mount(){lastMsgs().then(ch=>{if(ch&&S.route.name==='chats')render()})}}};
+
+function msgHtml(m){const mine=m.from==='me';
+  return `<div class="msg ${mine?'me':''}">${mine||m.from==='bot'?'':`<span class="who">${esc(m.from)}</span>`}<div class="bub">${esc(m.text)}</div>
+   ${(m.events||[]).map(id=>ev(id)?evCard(ev(id),{compact:1}):'').join('')}
+   ${m.action?`<button class="btn pri sm" style="align-self:flex-start;margin-top:4px" data-act="ai-create" data-v="${m.action.cat||''}">${ic('plus',17)} ${m.action.label}</button>`:''}
+   <time>${hm(m.t)}</time></div>`}
+P.chat=r=>{const ai=false,e=ev(r.id);if(!e)return P.event(r);const m=chatFor(r.id);
+ return{flush:1,html:`<div class="room"><div class="room-top glass"><button class="icon-btn" data-act="back" aria-label="Orqaga">${ic('back')}</button>
+   ${ai?`<span class="ai-av" style="width:40px;height:40px;border-radius:14px">${ic('spark',20)}</span>`:`<span class="tile" style="--c:${cat(e.cat).c};width:40px;height:40px;font-size:20px;border-radius:14px">${cat(e.cat).e}</span>`}
+   <div class="t"><b>${ai?'Sherik AI':esc(e.title)}</b><span class="tiny">${ai?'Test rejimi':`${e.people.length+1} kishi · ${fmtWhen(e.when)}`}</span></div>
+   ${ai?'':`<button class="icon-btn" data-go="event" data-id="${e.id}" aria-label="Tadbir haqida">${ic('chev')}</button>`}</div>
+  <div class="msgs" id="msgs">${m.map(msgHtml).join('')}</div>
+  <form class="composer glass" data-form="msg"><input id="m-text" placeholder="${ai?'Savolingizni yozing':'Xabar yozing'}" autocomplete="off" aria-label="Xabar"><button type="submit" aria-label="Yuborish">${ic('send',20)}</button></form></div>`,
+ mount(){const id=r.id;drawMsgs();loadMsgs(id).then(()=>{if(S.route.name==='chat'&&S.route.id===id)drawMsgs()});S.poll=setInterval(async()=>{if(document.hidden||S.route.name!=='chat'||S.route.id!==id)return;const n=chatFor(id).length;if(await loadMsgs(id)&&chatFor(id).length!==n)drawMsgs()},3000)}}};
+
+P.profile=()=>{const u=S.user||{name:'Mehmon'},mine=S.events.filter(e=>e.mine).length,th=document.documentElement.dataset.theme||'sys';
+ return{tabs:1,html:`<div class="wrap"><div class="top"><h1 style="font-size:24px">Profil</h1></div>
+  <div class="p-head glass">${av(u.name,'lg')}<div><h1>${esc(u.name)}</h1><p class="muted">${esc(u.email||'')}${S.loc?` · ${esc(S.loc.name)}`:''}</p></div>
+   ${u.bio?`<p>${esc(u.bio)}</p>`:''}
+   <div class="chips-wrap" style="justify-content:center">${(u.sports?.length?u.sports:['tennis','run']).map(s=>`<span class="pill" style="background:var(--field);color:var(--ink2)">${cat(s).e} ${cat(s).n}</span>`).join('')}</div>
+   <div class="stats"><div><b>${PAST.length+S.joined.size+mine}</b><span>Tadbir</span></div></div></div>
+  <div class="menu glass">
+   <button data-go="history"><span class="ico">${ic('cal',19)}</span><span class="g">Mening tadbirlarim</span>${ic('chev',18)}</button>
+   <button data-act="edit-profile"><span class="ico">${ic('edit',19)}</span><span class="g">Profilni tahrirlash</span>${ic('chev',18)}</button>
+   <button data-act="relocate"><span class="ico">${ic('locate',19)}</span><span class="g">Joylashuvni yangilash<br><span class="tiny">${esc(S.loc?.name||'Aniqlanmagan')}${S.loc?.demo?' (demo)':''}</span></span>${ic('chev',18)}</button>
+   <div class="mi"><span class="ico">${ic('moon',19)}</span><span class="g">Mavzu</span>
+     <span class="seg" style="min-width:200px">${[['sys','Tizim'],['light',"Yorug'"],['dark',"Tungi"]].map(t=>`<button data-act="theme" data-v="${t[0]}" aria-pressed="${th===t[0]}">${t[1]}</button>`).join('')}</span></div>
+   <button data-act="terms"><span class="ico">${ic('chev',19)}</span><span class="g">Foydalanish shartlari va xavfsizlik</span>${ic('chev',18)}</button>
+   <button data-act="logout" style="color:var(--danger)"><span class="ico" style="color:inherit">${ic('out',19)}</span><span class="g">${S.user?'Chiqish':"Ro'yxatdan o'tish"}</span></button>
+  </div></div>`}};
+
+P.history=()=>{const up=upcoming().filter(e=>S.joined.has(e.id)&&!e.mine).sort((a,b)=>a.when-b.when),mine=S.events.filter(e=>e.mine),t=S.hist;
+ const body=t==='up'?(up.length?up.map(e=>evCard(e)).join(''):`<div class="empty glass"><b>Kelayotgan tadbir yo'q</b><p class="muted">Yaqin atrofdagi tadbirlardan biriga qo'shiling.</p><button class="btn pri sm" data-go="home">Tadbirlarni ko'rish</button></div>`)
+  :t==='mine'?(mine.length?mine.map(e=>evCard(e)).join(''):`<div class="empty glass"><b>Siz hali tadbir yaratmagansiz</b><p class="muted">E'lon bering, sheriklar o'zi topadi.</p><button class="btn pri sm" data-go="create">${ic('plus',18)} Tadbir qo'shish</button></div>`)
+  :!PAST.length?`<div class="empty glass"><b>O'tgan tadbirlar yo'q</b></div>`:PAST.map(p=>{const c=cat(p.cat);return`<div class="ev glass"><span class="tile" style="--c:${c.c}">${c.e}</span><span class="body"><h4>${esc(p.title)}</h4>
+     <span class="meta"><span>${ic('clock',15)} ${fmtWhen(p.when)}</span><span>${ic('pin',15)} ${esc(p.place)}</span></span>
+     <span class="foot"><span class="stack">${p.with.map(n=>av(n,'sm')).join('')}</span><span class="stars" aria-label="${p.stars} yulduz">${ic('star',16).repeat(p.stars)}</span></span></span></div>`}).join('');
+ return{html:`<div class="wrap">${topBar('Mening tadbirlarim')}
+  <div class="seg">${[['up','Kelayotgan'],['past',"O'tgan"],['mine','Men yaratgan']].map(x=>`<button data-act="hist" data-v="${x[0]}" aria-pressed="${t===x[0]}">${x[1]}</button>`).join('')}</div>
+  <div class="cards">${body}</div></div>`}};
+
+/* ---------- router ---------- */
+const TABS=[['home','home','Asosiy'],['map','map','Xarita'],['create','plus',''],['chats','chat','Chatlar'],['profile','user','Profil']];
+function render(){
+  clearInterval(S.poll);
+  maps.splice(0).forEach(m=>m.destroy());
+  const r=S.route,pg=(P[r.name]||P.home)(r),v=$('#view');
+  v.className=pg.flush?'flush':'';v.innerHTML=pg.html;v.scrollTop=0;
+  $('#app').classList.toggle('has-tabs',!!pg.tabs);
+  const tb=$('#tabbar');tb.hidden=!pg.tabs;
+  tb.innerHTML=TABS.map(t=>t[0]==='create'?`<button class="add" data-go="create" aria-label="Tadbir qo'shish" ${r.name==='create'?'aria-current="page"':''}>${ic('plus',26)}</button>`
+    :`<button data-go="${t[0]}" ${r.name===t[0]?'aria-current="page"':''}>${ic(t[1],22)}${t[2]}</button>`).join('');
+  pg.mount&&pg.mount();
+  try{history.replaceState(null,'','#'+r.name+(r.id?'-'+r.id:''))}catch(e){}
+}
+const ROOT=['home','map','create','chats','profile','welcome'];
+function go(name,id){
+  if(!S.user&&!S.guest&&!['welcome','login','register'].includes(name))name='welcome';
+  if(ROOT.includes(name))S.stack=[];else S.stack.push(S.route);
+  if(name==='create'&&S.route.name!=='create'&&!S.draft)S.draft=newDraft();
+  S.route={name,id};render();
+}
+function back(){S.route=S.stack.pop()||{name:S.user||S.guest?'home':'welcome'};render()}
+
+
+/* ---------- actions ---------- */
+const press=(el)=>{$$('[aria-pressed]',el.parentElement).forEach(b=>b.setAttribute('aria-pressed',b===el))};
+const refreshFeed=()=>{const f=$('#feed');if(f)f.innerHTML=feedHtml();P.home.map&&maps.includes(P.home.map)&&P.home.map.setPins(filtered())};
+const A={
+ back,
+ 'gps-ok'(){closeSheet();locate(()=>{const n=S.afterGps;S.afterGps=null;n?n():render()})},
+ 'gps-skip'(){closeSheet();setLoc(41.3647,69.2885,true);const n=S.afterGps;S.afterGps=null;n?n():render()},
+ relocate(){askGps(null)},
+ async forgot(){const em=($('#l-email')?.value||'').trim();if(!/^\S+@\S+\.\S+$/.test(em)){toast('Avval emailingizni kiriting');return}
+   await SB.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});toast("Agar hisob mavjud bo'lsa, havola yuborildi.")},
+ toggle(el){el.setAttribute('aria-pressed',el.getAttribute('aria-pressed')!=='true')},
+ cat(el){S.f.cat=el.dataset.v||null;press(el);refreshFeed()},
+ day(el){S.f.day=el.dataset.v;press(el);refreshFeed()},
+ mcat(el){S.f.cat=el.dataset.v||null;press(el);S.sel=null;$('#map-card').hidden=true;P.map.pins()},
+ hist(el){S.hist=el.dataset.v;render()},
+ 'd-cat'(el){const d=S.draft;d.cat=el.dataset.v;press(el);const t=$('#c-title');if(!t.value.trim()||t.dataset.auto){t.value=d.cat==='other'?'':`${cat(d.cat).n}ga sherik kerak`;t.dataset.auto=1;d.title=t.value}},
+ 'd-day'(el){S.draft.day=+el.dataset.v;press(el)},
+ 'd-level'(el){S.draft.level=+el.dataset.v;press(el)},
+ 'd-need'(el){const d=S.draft;d.need=Math.max(1,Math.min(20,d.need+ +el.dataset.v));$('#c-need').textContent=d.need},
+ 'd-here'(){if(S.loc)P.create.map.fly(S.loc.lat,S.loc.lng,14.2);else askGps(null)},
+ 'pick-place'(el){const p=PLACES[+el.dataset.v],r=S.route.name;
+   if(r==='create'){P.create.map.fly(p.lat,p.lng,14.2);$('#c-res').hidden=true;$('#c-q').value=p.name}
+   else{P.map.map.fly(p.lat,p.lng,13.6);$('#map-res').hidden=true;$('#q-map').value=p.name}},
+ 'pick-ev'(el){$('#map-res').hidden=true;$('#q-map').value='';P.map.sel(ev(el.dataset.id))},
+ 'show-on-map'(el){S.sel=el.dataset.id;S.f.cat=null;go('map')},
+ async join(el){const e=ev(el.dataset.id);if(!e||!left(e))return;
+   const {error}=await SB.from('participants').insert({event_id:e.id,user_id:S.uid});
+   toast(error?(/qolmadi/i.test(error.message)?"Afsus, joy qolmadi.":"Qo'shilib bo'lmadi. Qayta urinib ko'ring."):"Qo'shildingiz. Guruh chati ochildi.");
+   await refresh();render()},
+ leave(el){const e=ev(el.dataset.id);sheet(`<h3>Tadbirdan chiqasizmi?</h3><p class="muted">"${esc(e.title)}" tadbiridagi joyingiz boshqalarga ochiladi.</p><button class="btn danger block" data-act="leave-yes" data-id="${e.id}">Ha, chiqaman</button><button class="btn sec block" data-act="close">Qolaman</button>`)},
+ async 'leave-yes'(el){await SB.from('participants').delete().eq('event_id',el.dataset.id).eq('user_id',S.uid);await refresh();closeSheet();toast('Tadbirdan chiqdingiz');render()},
+ 'cancel-ev'(el){const e=ev(el.dataset.id);sheet(`<h3>Tadbirni bekor qilasizmi?</h3><p class="muted">"${esc(e.title)}" o'chiriladi va qo'shilganlarga xabar boradi.</p><button class="btn danger block" data-act="cancel-yes" data-id="${e.id}">Ha, bekor qilaman</button><button class="btn sec block" data-act="close">Yo'q, qolsin</button>`)},
+ async 'cancel-yes'(el){const {error}=await SB.from('events').delete().eq('id',el.dataset.id);if(error){toast("Bekor qilib bo'lmadi");return}
+   delete S.chats[el.dataset.id];await refresh();closeSheet();toast('Tadbir bekor qilindi');go('home')},
+ close(){closeSheet()},
+ terms(){sheet(`<h3>Foydalanish shartlari</h3><div class="muted" style="max-height:52vh;overflow:auto;display:flex;flex-direction:column;gap:10px;font-size:14px">
+  <p><b>1. Yosh.</b> Ilovadan faqat 18 yoshdan oshganlar foydalana oladi.</p>
+  <p><b>2. Taqiqlanadi.</b> Haqorat, tahdid, bezovta qilish, aldash, soxta e'lon, zo'ravonlik va qonunga zid har qanday harakat.</p>
+  <p><b>3. Uchrashuvlar.</b> Sherik faqat e'lonlar e'lon qilinadigan joy. Uchrashuvlarni biz tashkil qilmaymiz va ishtirokchilarning xatti-harakati uchun javob bermaymiz. Uchrashuvga o'z ixtiyoringiz bilan borasiz.</p>
+  <p><b>4. Xavfsizlik.</b> Birinchi uchrashuvni ochiq, gavjum joyda o'tkazing, yaqinlaringizga xabar bering, shaxsiy ma'lumotingizni (manzil, parol, pul) bermang. Xavf tug'ilsa: 102 (militsiya), 103 (tez yordam).</p>
+  <p><b>5. Shikoyat.</b> Qoida buzgan foydalanuvchi haqida "Shikoyat" tugmasi orqali xabar bering yoki uni bloklang. Qoida buzganlarning hisobi cheklanishi yoki o'chirilishi mumkin.</p>
+  <p><b>6. Ma'lumotlar.</b> Ro'yxatdan o'tishda ismingiz, email manzilingiz va tanlagan mashg'ulotlaringiz saqlanadi. Email manzilingiz boshqa foydalanuvchilarga ko'rsatilmaydi. Siz yaratgan tadbirning joyi, vaqti va chat xabarlari ro'yxatdan o'tgan boshqa foydalanuvchilarga ko'rinadi. Qurilmangizning aniq joylashuvi serverga yuborilmaydi. Shikoyat qilingan hisoblar tekshirilishi mumkin. Qonuniy so'rov bo'lganda ma'lumotlar vakolatli organlarga berilishi mumkin. Hisob va ma'lumotlarni o'chirish uchun murojaat qiling.${CFG.contact?` Murojaat: ${esc(CFG.contact)}`:''}</p></div>
+  <button class="btn pri block" data-act="close">Tushundim</button>`)},
+ person(el){S.rep={n:el.dataset.n,uid:el.dataset.uid,id:el.dataset.id};sheet(`<h3>${esc(el.dataset.n)}</h3><button class="btn sec block" data-act="report">Shikoyat qilish</button><button class="btn danger block" data-act="block">Bloklash</button><button class="btn ghost block" data-act="close">Yopish</button>`)},
+ report(){sheet(`<h3>Nima bo'ldi?</h3>${['Haqorat yoki tahdid',"Soxta e'lon yoki firibgarlik","Noo'rin xatti-harakat",'Boshqa'].map(r=>`<button class="btn sec block" data-act="report-send" data-r="${r}">${r}</button>`).join('')}<button class="btn ghost block" data-act="close">Bekor qilish</button>`)},
+ async 'report-send'(el){const r=S.rep||{};if(!r.uid)return;
+   const {error}=await SB.from('reports').insert({reporter_id:S.uid,reported_id:r.uid,event_id:r.id||null,reason:el.dataset.r});
+   if(error){toast("Shikoyat yuborilmadi. Qayta urinib ko'ring.");return}
+   sheet(`<h3>Shikoyat qabul qilindi</h3><p class="muted">Rahmat, shikoyatni ko'rib chiqamiz. Xohlasangiz, ${esc(r.n||'bu foydalanuvchi')}ni bloklab, uning tadbirlarini yashirishingiz mumkin.</p><button class="btn danger block" data-act="block">Bloklash</button><button class="btn sec block" data-act="close">Yopish</button>`)},
+ async block(){const r=S.rep||{};if(!r.uid)return;
+   const {error}=await SB.from('blocks').insert({blocker_id:S.uid,blocked_id:r.uid});
+   if(error&&error.code!=='23505'){toast("Bloklab bo'lmadi");return}
+   await refresh();closeSheet();toast('Foydalanuvchi bloklandi');S.stack=[{name:'home'}];S.route={name:'home'};render()},
+ theme(el){const v=el.dataset.v;if(v==='sys')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=v;store.set('theme',v);press(el)},
+ 'edit-profile'(){const u=S.user||{name:'',bio:''};sheet(`<h3>Profilni tahrirlash</h3>
+   <form data-form="profile" style="display:flex;flex-direction:column;gap:12px" novalidate>
+   <div class="field"><label for="p-name">Ism</label><input class="inp" id="p-name" value="${esc(u.name||'')}" maxlength="30"></div>
+   <div class="field"><label for="p-bio">O'zingiz haqingizda</label><textarea class="inp" id="p-bio" maxlength="140" placeholder="Masalan, haftada 2 marta tennis o'ynayman">${esc(u.bio||'')}</textarea></div>
+   <button class="btn pri block" type="submit">Saqlash</button><button class="btn ghost block" type="button" data-act="close">Bekor qilish</button></form>`)},
+ logout(){if(!S.user){S.guest=false;go('register');return}
+   sheet(`<h3>Hisobdan chiqasizmi?</h3><p class="muted">Qayta kirish uchun telefon raqam va parol kerak bo'ladi.</p><button class="btn danger block" data-act="logout-yes">Chiqish</button><button class="btn sec block" data-act="close">Qolish</button>`)},
+ async 'logout-yes'(){await SB.auth.signOut();S.user=null;S.uid=null;S.events=[];S.joined=new Set();S.chats={};closeSheet();go('welcome')}
+};
+
+/* ---------- server layer (Supabase) ---------- */
+const busy=on=>$$('form button[type=submit]').forEach(b=>b.disabled=on);
+function authErr(e){const m=String(e?.message||e).toLowerCase();
+  return /invalid login/.test(m)?"Email yoki parol noto'g'ri."
+   :/not confirmed/.test(m)?"Emailingiz tasdiqlanmagan. Pochtangizdagi havolani bosing."
+   :/already registered|already been registered/.test(m)?"Bu email bilan hisob bor. Kirish bo'limiga o'ting."
+   :/rate limit|security purposes|too many/.test(m)?"Juda ko'p urinish. Birozdan so'ng qayta urinib ko'ring."
+   :/password/.test(m)?"Parol juda oddiy yoki qisqa. Kamida 8 ta belgi kiriting."
+   :/fetch|network/.test(m)?"Internetga ulanib bo'lmadi.":"Xatolik yuz berdi. Qayta urinib ko'ring."}
+function mapEv(r){const ps=(r.participants||[]).filter(p=>p.user_id!==r.host_id);
+  return{id:r.id,cat:r.cat,title:r.title,place:r.place,lat:r.lat,lng:r.lng,when:new Date(r.when_at),need:r.need,level:r.level,note:r.note||'',
+   hostId:r.host_id,host:r.host?.name||'Foydalanuvchi',people:ps.map(p=>p.profile?.name||'Foydalanuvchi'),pids:ps.map(p=>p.user_id),mine:r.host_id===S.uid}}
+async function refresh(){
+  const {data,error}=await SB.from('events').select('id,cat,title,place,lat,lng,when_at,need,level,note,host_id,host:profiles!host_id(name),participants(user_id,profile:profiles(name))')
+    .gte('when_at',new Date(Date.now()-36e5).toISOString()).order('when_at');
+  if(error){toast("Ma'lumot yuklanmadi. Internetni tekshiring.");return false}
+  S.events=data.map(mapEv);S.joined=new Set(S.events.filter(e=>e.pids.includes(S.uid)).map(e=>e.id));return true}
+async function enter(u){
+  const {data:p}=await SB.from('profiles').select('name,bio,sports,banned').eq('id',u.id).maybeSingle();
+  if(p?.banned){await SB.auth.signOut();S.user=null;S.uid=null;toast("Hisobingiz cheklangan.");return}
+  S.uid=u.id;S.user={name:p?.name||(u.email||'').split('@')[0]||'Foydalanuvchi',bio:p?.bio||'',sports:p?.sports||[],email:u.email};
+  await refresh()}
+function recoverySheet(){sheet(`<h3>Yangi parol</h3><form data-form="newpass" style="display:flex;flex-direction:column;gap:12px" novalidate><div class="field"><label for="np">Yangi parol</label><input class="inp" id="np" type="password" placeholder="Kamida 8 ta belgi" autocomplete="new-password"></div><p class="err" id="np-err" hidden></p><button class="btn pri block" type="submit">Saqlash</button></form>`)}
+const toMsg=m=>({id:m.id,from:m.user_id===S.uid?'me':(m.sender?.name||'?'),t:new Date(m.created_at),text:m.text});
+async function loadMsgs(id){
+  const {data,error}=await SB.from('messages').select('id,user_id,text,created_at,sender:profiles(name)').eq('event_id',id).order('created_at').limit(200);
+  if(error)return false;S.chats[id]=data.map(toMsg);return true}
+function drawMsgs(){const b=$('#msgs');if(!b)return;const near=b.scrollHeight-b.scrollTop-b.clientHeight<80;
+  b.innerHTML=chatFor(S.route.id).map(msgHtml).join('');if(near||!b.dataset.init){b.scrollTop=b.scrollHeight;b.dataset.init=1}}
+async function lastMsgs(){const ids=myChats().map(e=>e.id).filter(i=>!S.chats[i]);if(!ids.length)return false;
+  const {data}=await SB.from('messages').select('event_id,user_id,text,created_at,sender:profiles(name)').in('event_id',ids).order('created_at',{ascending:false}).limit(100);
+  const seen=new Set();let ch=false;
+  for(const m of data||[]){if(seen.has(m.event_id))continue;seen.add(m.event_id);S.chats[m.event_id]=[toMsg(m)];ch=true}
+  return ch}
+async function sendMsg(text){const id=S.route.id;
+  const {error}=await SB.from('messages').insert({event_id:id,user_id:S.uid,text:text.slice(0,500)});
+  if(error){toast("Xabar yuborilmadi");return false}
+  await loadMsgs(id);if(S.route.name==='chat'&&S.route.id===id)drawMsgs();return true}
+
+const F={
+ async login(){const em=$('#l-email').value.trim().toLowerCase(),pw=$('#l-pass').value,er=$('#l-err');
+   const m=!/^\S+@\S+\.\S+$/.test(em)?"Emailni to'g'ri kiriting.":pw.length<8?"Parol kamida 8 ta belgidan iborat bo'lishi kerak.":'';
+   er.hidden=!m;er.textContent=m;if(m)return;
+   busy(true);const {data,error}=await SB.auth.signInWithPassword({email:em,password:pw});
+   if(error){busy(false);er.hidden=false;er.textContent=authErr(error);return}
+   await enter(data.user);busy(false);if(!S.user)return;
+   S.loc?go('home'):askGps(()=>go('home'))},
+ async register(){const n=$('#r-name').value.trim(),em=$('#r-email').value.trim().toLowerCase(),pw=$('#r-pass').value,er=$('#r-err');
+   const m=n.length<2?'Ismingizni kiriting.':!/^\S+@\S+\.\S+$/.test(em)?"Emailni to'g'ri kiriting.":pw.length<8?"Parol kamida 8 ta belgidan iborat bo'lishi kerak.":!$('#r-terms').checked?"Davom etish uchun 18+ yoshni va shartlarga rozilikni tasdiqlang.":'';
+   er.hidden=!m;er.textContent=m;if(m)return;
+   const sports=$$('#r-sports [aria-pressed="true"]').map(b=>b.dataset.v);
+   busy(true);const {data,error}=await SB.auth.signUp({email:em,password:pw,options:{data:{name:n,sports,agreed:'true'},emailRedirectTo:location.origin+location.pathname}});busy(false);
+   if(error){er.hidden=false;er.textContent=authErr(error);return}
+   if(data.session){await enter(data.user);if(!S.user)return;askGps(()=>{toast(`Xush kelibsiz, ${n}!`);go('home')});return}
+   sheet(`<h3>Emailingizni tekshiring</h3><p class="muted">${esc(em)} manziliga tasdiqlash havolasi yuborildi. Havolani bosgach, shu yerga qaytib kiring.</p><button class="btn pri block" data-go="login">Kirishga o'tish</button>`)},
+ async create(){const d=S.draft,er=$('#c-err');d.title=$('#c-title').value.trim();d.time=$('#c-time').value;d.note=$('#c-note').value.trim();
+   const [h,mi]=(d.time||'').split(':').map(Number),w=sod(new Date(Date.now()+d.day*864e5));w.setHours(h||0,mi||0);
+   const m=!d.cat?"Mashg'ulot turini tanlang.":d.title.length<3?'Sarlavha yozing, kamida 3 ta harf.':!d.time?'Vaqtni tanlang.':w<=Date.now()?"Bu vaqt o'tib ketgan. Keyinroq vaqtni tanlang.":'';
+   er.hidden=!m;er.textContent=m;if(m){er.scrollIntoView({block:'center'});return}
+   busy(true);const {data,error}=await SB.from('events').insert({host_id:S.uid,cat:d.cat,title:d.title,place:d.place||'Belgilangan joy',lat:d.lat,lng:d.lng,when_at:w.toISOString(),need:d.need,level:d.level,note:d.note||null}).select('id').single();busy(false);
+   if(error){er.hidden=false;er.textContent="E'lon qilib bo'lmadi. Qayta urinib ko'ring.";return}
+   await refresh();S.draft=null;toast("Tadbir e'lon qilindi");S.stack=[{name:'home'}];S.route={name:'event',id:data.id};render()},
+ msg(){const i=$('#m-text'),t=i.value.trim();if(!t)return;i.value='';sendMsg(t).then(ok=>{if(!ok&&!i.value)i.value=t})},
+ async profile(){const n=$('#p-name').value.trim();if(n.length<2){toast('Ismingizni kiriting');return}
+   const bio=$('#p-bio').value.trim();
+   const {error}=await SB.from('profiles').update({name:n,bio:bio||null}).eq('id',S.uid);
+   if(error){toast("Saqlab bo'lmadi");return}
+   S.user={...S.user,name:n,bio};closeSheet();toast('Profil saqlandi');await refresh();render()},
+ async newpass(){const pw=$('#np').value,er=$('#np-err');
+   if(pw.length<8){er.hidden=false;er.textContent="Parol kamida 8 ta belgidan iborat bo'lishi kerak.";return}
+   const {error}=await SB.auth.updateUser({password:pw});
+   if(error){er.hidden=false;er.textContent=authErr(error);return}
+   closeSheet();toast('Parol yangilandi')}
+};
+function placeResults(q,box,withEvents){
+  q=q.trim().toLowerCase();if(!q){box.hidden=true;return}
+  const ps=PLACES.map((p,i)=>[p,i]).filter(x=>x[0].name.toLowerCase().includes(q)).slice(0,6),
+        es=withEvents?upcoming().filter(e=>(e.title+' '+cat(e.cat).n).toLowerCase().includes(q)).slice(0,4):[];
+  box.innerHTML=es.map(e=>`<button type="button" data-act="pick-ev" data-id="${e.id}"><span style="font-size:22px">${cat(e.cat).e}</span><span><b>${esc(e.title)}</b><span class="tiny">${fmtWhen(e.when)} · ${esc(e.place)}</span></span></button>`).join('')
+    +ps.map(x=>`<button type="button" data-act="pick-place" data-v="${x[1]}">${ic('pin',20)}<span><b>${esc(x[0].name)}</b><span class="tiny">${x[0].type==='tuman'?'Tuman':x[0].type==='park'?"Bog'":x[0].type==='sport'?'Sport inshooti':'Mashhur joy'}</span></span></button>`).join('')
+    ||`<p class="muted" style="padding:12px">"${esc(q)}" bo'yicha joy topilmadi. Xaritani surib, joyni qo'lda belgilang.</p>`;
+  box.hidden=false;
+}
+document.addEventListener('click',e=>{
+  if(e.target.id==='sheet'){closeSheet();return}
+  const a=e.target.closest('[data-act]');if(a&&A[a.dataset.act]){A[a.dataset.act](a,e);return}
+  const g=e.target.closest('[data-go]');if(g){closeSheet();go(g.dataset.go,g.dataset.id)}
+});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target.dataset.form;F[f]&&F[f]()});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.id==='q-home'){S.f.q=t.value;refreshFeed()}
+  else if(t.id==='q-map')placeResults(t.value,$('#map-res'),true)
+  else if(t.id==='c-q')placeResults(t.value,$('#c-res'),false)
+  else if(t.id==='c-title'){delete t.dataset.auto;S.draft.title=t.value}
+  else if(t.id==='c-note')S.draft.note=t.value
+  else if(t.id==='c-time')S.draft.time=t.value});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+/* ---------- boot ---------- */
+const th=store.get('theme','sys');if(th!=='sys')document.documentElement.dataset.theme=th;
+const route0=()=>{const h=(location.hash||'').slice(1),i=h.indexOf('-');return[i<0?h:h.slice(0,i),i<0?'':h.slice(i+1)]};
+(async()=>{
+  if(!SB){S.route={name:'setup'};render();return}
+  SB.auth.onAuthStateChange((evt,sess)=>{if(evt==='PASSWORD_RECOVERY'&&sess)setTimeout(async()=>{await enter(sess.user);if(!S.loc)setLoc(41.3647,69.2885,true);go('home');recoverySheet()},0)});
+  const {data:{session}}=await SB.auth.getSession();
+  if(session)await enter(session.user);
+  const [hn,hid]=route0();
+  if(S.user){if(!S.loc)setLoc(41.3647,69.2885,true);S.route=P[hn]&&!['welcome','login','register','setup'].includes(hn)?{name:hn,id:hid}:{name:'home'}}
+  else S.route={name:['login','register'].includes(hn)?hn:'welcome'};
+  render();
+  setInterval(async()=>{if(!S.uid||document.hidden||!['home','map'].includes(S.route.name))return;
+    if(!await refresh())return;if(S.route.name==='home')refreshFeed();else if(P.map.pins)P.map.pins()},30000);
+})();
+})();
+</script>
+
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(err => {
+      console.warn("Service Worker registration failed:", err);
+    });
+  });
+}
+</script>
+
+</body></html>
